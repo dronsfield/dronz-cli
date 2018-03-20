@@ -1,10 +1,33 @@
-const {Command, flags} = require('@oclif/command')
+const { Command, flags } = require('@oclif/command')
+const { prompt } = require('inquirer')
+const _ = require('lodash/fp')
+
+const redant = require('./redant')
+const test = require('./test')
+
+const commands = { redant, test }
+
+const getChoices = commands => Object.keys(commands).map(key => {
+  return {
+    name: commands[key].choice,
+    value: key
+  }
+})
 
 class DronzCliCommand extends Command {
-  async run() {
-    const {flags} = this.parse(DronzCliCommand)
-    const name = flags.name || 'world'
-    this.log(`hello ${name} from ${__filename}!`)
+  async run () {
+    const { flags } = this.parse(DronzCliCommand)
+
+    prompt({
+      type: 'list',
+      name: 'init',
+      message: 'what do you want to do?',
+      choices: getChoices(commands)
+    })
+    .then(({ init }) => {
+      commands[init].run()
+    })
+    
   }
 }
 
