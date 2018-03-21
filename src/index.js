@@ -2,17 +2,12 @@ const { Command, flags } = require('@oclif/command')
 const { prompt } = require('inquirer')
 const _ = require('lodash/fp')
 
-const redant = require('./redant')
-const test = require('./test')
+const { getChoices } = require('./util')
+
+const redant = require('./commands/redant')
+const test = require('./commands/test')
 
 const commands = { redant, test }
-
-const getChoices = commands => Object.keys(commands).map(key => {
-  return {
-    name: commands[key].choice,
-    value: key
-  }
-})
 
 class DronzCliCommand extends Command {
   async run () {
@@ -27,7 +22,6 @@ class DronzCliCommand extends Command {
     .then(({ init }) => {
       commands[init].run()
     })
-    
   }
 }
 
