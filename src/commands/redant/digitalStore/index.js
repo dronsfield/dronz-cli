@@ -1,6 +1,8 @@
 const { prompt } = require('inquirer')
 
-const { getChoices } = require('../../../util')
+const { getChoices, makeFile } = require('../../../util')
+
+const createReduxModule = require('./createReduxModule')
 
 const fs = require('fs')
 const mkdirp = require('mkdirp')
@@ -14,18 +16,7 @@ const commands = {
 
       const path = 'test/long/ass/path/lmao.txt'
       const content = '¯\\_(ツ)_/¯'
-      mkdirp(dirname(path), err => {
-        if (err) {
-          throw err
-        }
-        else {
-          fs.writeFile(path, content, err => {
-            if (err) {
-              throw err
-            }
-          })
-        }
-      })
+      makeFile(path, content)
     }
   },
   nothing: {
@@ -33,6 +24,10 @@ const commands = {
     run: () => {
       console.log('k.')
     }
+  },
+  createReduxModule: {
+    choice: 'create redux module',
+    run: createReduxModule
   }
 }
 
