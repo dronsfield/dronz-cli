@@ -9,15 +9,6 @@ const commands = { digitalStore, general }
 
 module.exports = {
   choice: 'redant stuff',
-  run: () => {
-    prompt({
-      type: 'list',
-      name: 'init',
-      message: 'what project?',
-      choices: getChoices(commands)
-    })
-    .then(({ init }) => {
-      commands[init].run()
-    })
-  }
+  message: 'what project?',
+  commands
 }

@@ -2,31 +2,38 @@ const { Command, flags } = require('@oclif/command')
 const { prompt } = require('inquirer')
 const _ = require('lodash')
 
-const { getChoices } = require('./util')
+const { nestedPrompt } = require('./util')
 
 const redant = require('./commands/redant')
 const test = require('./commands/test')
 
-const createReduxModule = require('./commands/redant/digitalStore/createReduxModule')
-
 const commands = { redant, test }
 
-const commandsMap = {
-  redux: createReduxModule,
-  r: createReduxModule
+const addShortcuts = ({ commands, shortcuts = {} }) => {
+  Object.values(commands).forEach(({ commands, shortcut, run }) => {
+    if (commands) {
+      addShortcuts({ commands, shortcuts })
+    }
+    if (shortcut) {
+      if (Array.isArray(shortcut)) {
+        shortcut.forEach(s => {
+          shortcuts[s] = run || _.noop
+        })
+      } else {
+        shortcuts[shortcut] = run || _.noop
+      }
+    }
+  })
+  return shortcuts
 }
 
 class DronzCliCommand extends Command {
-  // static args = [
-  //   { name: 'command' }
-  // ]
-
   async run () {
     const { flags } = this.parse(DronzCliCommand)
     const { args: { commandName } } = this.parse(DronzCliCommand)
 
     if (commandName) {
-      const command = commandsMap[commandName]
+      const command = addShortcuts({ commands })[commandName]
       if (command) {
         command()
       }
@@ -35,14 +42,9 @@ class DronzCliCommand extends Command {
       }
     }
     else {
-      prompt({
-        type: 'list',
-        name: 'init',
+      nestedPrompt({
         message: 'what do you want to do?',
-        choices: getChoices(commands)
-      })
-      .then(({ init }) => {
-        commands[init].run()
+        commands
       })
     }
   }
@@ -50,12 +52,6 @@ class DronzCliCommand extends Command {
 DronzCliCommand.args = [
   { name: 'commandName' }
 ]
-
-DronzCliCommand.description = `
-Describe the command here
-...
-Extra documentation goes here
-`
 
 DronzCliCommand.flags = {
   // add --version flag to show CLI version

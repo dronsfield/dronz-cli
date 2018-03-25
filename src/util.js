@@ -1,6 +1,7 @@
 const fs = require('fs')
 const mkdirp = require('mkdirp')
 const { dirname } = require('path')
+const { prompt } = require('inquirer')
 
 const getChoices = commands => Object.keys(commands).map(key => {
   return {
@@ -25,7 +26,24 @@ const makeFile = (path, content, cb = makeFileDefaultCallback) => {
   })
 }
 
+const nestedPrompt = ({ message = 'what now?', commands, run }) => {
+  if (commands) {
+    prompt({
+      type: 'list',
+      name: 'next',
+      message,
+      choices: getChoices(commands)
+    })
+    .then(({ next }) => {
+      nestedPrompt(commands[next])
+    })
+  } else if (run) {
+    run()
+  }
+}
+
 module.exports = {
   getChoices,
-  makeFile
+  makeFile,
+  nestedPrompt
 }

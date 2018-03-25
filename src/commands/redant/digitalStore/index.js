@@ -11,6 +11,7 @@ const { dirname } = require('path')
 const commands = {
   sdkControllerTest: {
     choice: 'make sdk controller test',
+    shortcut: 'sdkct',
     run: () => {
       console.log('beep boop')
 
@@ -21,27 +22,20 @@ const commands = {
   },
   nothing: {
     choice: 'nothing much',
+    shortcut: 'nada',
     run: () => {
       console.log('k.')
     }
   },
   createReduxModule: {
     choice: 'create redux module',
+    shortcut: ['crm', 'r'],
     run: createReduxModule
   }
 }
 
 module.exports = {
   choice: 'digital store',
-  run: () => {
-    prompt({
-      type: 'list',
-      name: 'init',
-      message: 'what do?',
-      choices: getChoices(commands)
-    })
-    .then(({ init }) => {
-      commands[init].run()
-    })
-  }
+  message: 'what do?',
+  commands
 }
