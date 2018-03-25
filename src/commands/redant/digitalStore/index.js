@@ -27,11 +27,7 @@ const commands = {
       console.log('k.')
     }
   },
-  createReduxModule: {
-    choice: 'create redux module',
-    shortcut: ['crm', 'r'],
-    run: createReduxModule
-  }
+  createReduxModule
 }
 
 module.exports = {

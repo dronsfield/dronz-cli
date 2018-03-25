@@ -31,6 +31,7 @@ class DronzCliCommand extends Command {
   async run () {
     const { flags } = this.parse(DronzCliCommand)
     const { args: { commandName } } = this.parse(DronzCliCommand)
+    console.log({ flags })
 
     if (commandName) {
       const command = addShortcuts({ commands })[commandName]
