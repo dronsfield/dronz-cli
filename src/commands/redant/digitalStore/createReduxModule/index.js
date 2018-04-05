@@ -1,7 +1,5 @@
 const { prompt } = require('inquirer')
 const _ = require('lodash')
-const path = require('path')
-const colors = require('colors')
 
 const { makeFile } = require('../../../../util')
 
@@ -28,9 +26,8 @@ const run = () => {
 
     const constants = methods.map(method => (
       _.snakeCase(method).toUpperCase()
-    ))
-
-    const files = {};
+    ));
+    
     [
       'actions',
       'constants',
@@ -42,7 +39,7 @@ const run = () => {
     ]
     .forEach(fileName => {
       const path = `src/store/modules/${name}/${fileName}.js`
-      const content = require(`./${fileName}.template`)({ methods, constants, name })
+      const content = require(`./templates/${fileName}.template`)({ methods, constants, name })
       console.log(path.red)
       console.log(content)
       console.log()

@@ -10,20 +10,41 @@ const getChoices = commands => Object.keys(commands).map(key => {
   }
 })
 
-const makeFileDefaultCallback = err => {
+const fsDefaultCallback = err => {
   if (err) {
     throw err
   }
 }
-const makeFile = (path, content, cb = makeFileDefaultCallback) => {
+const makeFile = (path, content, cb = fsDefaultCallback) => {
   mkdirp(dirname(path), err => {
     if (err) {
       throw err
-    }
-    else {
+    } else {
       fs.writeFile(path, content, cb)
     }
   })
+}
+
+// path: file to edit
+// getLine: function, lines => lineNumber
+// content: what to insert
+// cb: what to do after
+const editFile = (path, getLine, content, cb = fsDefaultCallback) => {
+  fs.readFile(
+    path,
+    'utf8',
+    (err, data) => {
+      if (err) {
+        throw err
+      } else {
+        const lines = data.split('\n')
+        const n = getLine(lines)
+        lines.splice(n, 0, content)
+        const toWrite = lines.join('\n')
+        makeFile(path, toWrite, cb)
+      }
+    }
+  )
 }
 
 const nestedPrompt = ({ message = 'what now?', commands, run }) => {
@@ -45,5 +66,6 @@ const nestedPrompt = ({ message = 'what now?', commands, run }) => {
 module.exports = {
   getChoices,
   makeFile,
+  editFile,
   nestedPrompt
 }

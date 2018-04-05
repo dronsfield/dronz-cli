@@ -10,7 +10,6 @@ class ${classCase(name)}Actions {${methods.map((method, i) => (`
     type: constants.${constants[i]}
   })`)).join('\n')}
 }
-  
+
 export default new ${classCase(name)}Actions()
 `)
-  

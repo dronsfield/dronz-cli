@@ -1,6 +1,7 @@
 const { Command, flags } = require('@oclif/command')
 const { prompt } = require('inquirer')
 const _ = require('lodash')
+const colors = require('colors')
 
 const { nestedPrompt } = require('./util')
 
@@ -31,7 +32,7 @@ class DronzCliCommand extends Command {
   async run () {
     const { flags } = this.parse(DronzCliCommand)
     const { args: { commandName } } = this.parse(DronzCliCommand)
-    console.log({ flags })
+    // console.log({ flags })
 
     if (commandName) {
       const command = addShortcuts({ commands })[commandName]

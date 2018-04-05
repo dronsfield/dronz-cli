@@ -18,7 +18,6 @@ class ${classCase(name)}Reducers {${methods.map((method, i) => (`
     }
   }`)).join('\n')}
 }
-  
+
 export default new ${classCase(name)}Reducers()
 `)
-  
