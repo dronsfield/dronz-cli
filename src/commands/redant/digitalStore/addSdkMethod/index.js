@@ -3,6 +3,12 @@ const _ = require('lodash')
 
 const { editFile, makeFile } = require('../../../../util')
 
+// TO DO
+// make config file use params from endpoint
+// import test utils if not there
+// comma in config file
+// option to not use test utils
+
 const questions = [
   {
     type: 'input',
@@ -72,6 +78,11 @@ const run = () => {
       lines => lines.findIndex(line => line.indexOf('}') === 0),
       require(`./templates/serviceTest.template`)({ name, sdkModule })
     )
+    editFile(
+      `test/services/${sdkModule}Service.test.js`,
+      lines => lines.findIndex(line => line.includes('mocks')),
+      `import ${name}Mock from './mocks/${name}Mock'`
+    )
 
     // add method to controller test file
     editFile(
@@ -83,16 +94,16 @@ const run = () => {
     // add api endpoint to config file
     editFile(
       `src/config.js`,
-      lines => lines.findIndex(line => line.indexOf('\t\t}') === 0),
-      `\t\t\t${name}: () => /v1/${endpoint}`
+      lines => lines.findIndex(line => line.indexOf('\t\t}') === 0 || line.indexOf('    }') === 0),
+      `\t\t\t${name}: () => \`/v1/${endpoint}\``
     )
 
     // add config test
     editFile(
       `test/config.test.js`,
       lines => {
-        const start = lines.findIndex(line => line.indexOf(`\tdescribe('endpointUrls'`) === 0)
-        return -1 + start + lines.slice(start).findIndex(line => line.indexOf('\t}') === 0)
+        const start = lines.findIndex(line => line.indexOf(`\tdescribe('endpointUrls'`) === 0 || line.indexOf((`  describe('endpointUrls'`) === 0))
+        return -1 + start + lines.slice(start).findIndex(line => line.indexOf('\t}') === 0 || line.indexOf('  }') === 0)
       },
       require(`./templates/configTest.template`)({ name, endpoint })
     )

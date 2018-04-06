@@ -1,6 +1,6 @@
 module.exports = ({ name, sdkModule }) => (`
   ${name} = params => {
-    return ${sdkModule}
+    return ${sdkModule}Service
       .${name}(params)
   }`
 )
