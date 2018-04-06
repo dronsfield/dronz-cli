@@ -38,8 +38,12 @@ const editFile = (path, getLine, content, cb = fsDefaultCallback) => {
         throw err
       } else {
         const lines = data.split('\n')
-        const n = getLine(lines)
-        lines.splice(n, 0, content)
+        let n = getLine(lines)
+        if (n >= 0) {
+          lines.splice(n, 0, content)
+        } else {
+          lines.push(content)
+        }
         const toWrite = lines.join('\n')
         makeFile(path, toWrite, cb)
       }

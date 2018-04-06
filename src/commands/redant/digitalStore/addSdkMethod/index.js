@@ -18,15 +18,15 @@ const questions = [
   },
   {
     type: 'input',
-    name: 'verb',
-    message: 'http verb? (eg: get, post)',
-    default: 'GET'
-  },
-  {
-    type: 'input',
     name: 'endpoint',
     message: 'endpoint url? (the bit after /v1/)',
     default: 'foo'
+  },
+  {
+    type: 'input',
+    name: 'verb',
+    message: 'http verb? (eg: get, post)',
+    default: 'GET'
   }
 ]
 
@@ -73,6 +73,13 @@ const run = () => {
       require(`./templates/serviceTest.template`)({ name, sdkModule })
     )
 
+    // add method to controller test file
+    editFile(
+      `test/controllers/${sdkModule}Controller.test.js`,
+      lines => lines.findIndex(line => line.indexOf('}') === 0),
+      require(`./templates/controllerTest.template`)({ name, sdkModule })
+    )
+
     // add api endpoint to config file
     editFile(
       `src/config.js`,
@@ -88,6 +95,32 @@ const run = () => {
         return -1 + start + lines.slice(start).findIndex(line => line.indexOf('\t}') === 0)
       },
       require(`./templates/configTest.template`)({ name, endpoint })
+    )
+
+    // add link to docs root
+    editFile(
+      `docs/index.md`,
+      lines => {
+        const sectionStart = lines.findIndex(line => line.indexOf(`### [${_.startCase(sdkModule)}]`) === 0)
+        const lastLineOfSection = lines.slice(sectionStart).findIndex(line => line.length === 0 || line.slice(0, 1) === ' ')
+        return sectionStart + lastLineOfSection
+      },
+      `* [${_.startCase(name)}](${sdkModule}/${name}.md)`
+    )
+    
+    // add link to module docs
+    editFile(
+      `docs/${sdkModule}/index.md`,
+      lines => {
+        return lines.findIndex(line => line.length === 0 || line.slice(0, 1) === ' ')
+      },
+      `* [${_.startCase(name)}](${name}.md)`
+    )
+
+    // add doc
+    makeFile(
+      `docs/${sdkModule}/${name}.md`,
+      require(`./templates/doc.template`)({ name, sdkModule })
     )
   })
 }
