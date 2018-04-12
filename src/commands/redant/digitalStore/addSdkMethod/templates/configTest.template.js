@@ -1,6 +1,10 @@
 const getFakeParams = endpoint => {
   const params = endpoint.match(/:([a-zA-Z]+)/g)
-  return `{ ${params.map(param => `${param.replace(':','')}: ${param}`).join(', ')} }`
+  if (params && params.length) {
+    return `{ ${params.map(param => `${param.replace(':','')}: '${param}`).join(', ')}' }`
+  } else {
+    return ''
+  }
 }
 
 module.exports = ({ name, endpoint }) => (

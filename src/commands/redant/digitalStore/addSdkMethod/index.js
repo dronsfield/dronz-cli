@@ -102,8 +102,23 @@ const run = () => {
     editFile(
       `test/config.test.js`,
       lines => {
-        const start = lines.findIndex(line => line.indexOf(`\tdescribe('endpointUrls'`) === 0 || line.indexOf((`  describe('endpointUrls'`) === 0))
-        return -1 + start + lines.slice(start).findIndex(line => line.indexOf('\t}') === 0 || line.indexOf('  }') === 0)
+        const start = lines.findIndex(
+          line => (
+            line.indexOf(`\tdescribe('endpointUrls'`) === 0 ||
+            line.indexOf(`  describe('endpointUrls'`) === 0
+          )
+        )
+        console.log({ start })
+        return (
+          // -1 +
+          start +
+          lines.slice(start).findIndex(
+            line => (
+              line.indexOf('\t}') === 0 ||
+              line.indexOf('  }') === 0
+            )
+          )
+        )
       },
       require(`./templates/configTest.template`)({ name, endpoint })
     )
