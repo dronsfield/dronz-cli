@@ -6,9 +6,10 @@ const colors = require('colors')
 const { nestedPrompt } = require('./util')
 
 const redant = require('./commands/redant')
+const dronz = require('./commands/dronz')
 const test = require('./commands/test')
 
-const commands = { redant, test }
+const commands = { redant, dronz, test }
 
 const addShortcuts = ({ commands, shortcuts = {} }) => {
   Object.values(commands).forEach(({ commands, shortcut, run }) => {
@@ -31,13 +32,13 @@ const addShortcuts = ({ commands, shortcuts = {} }) => {
 class DronzCliCommand extends Command {
   async run () {
     const { flags } = this.parse(DronzCliCommand)
-    const { args: { commandName } } = this.parse(DronzCliCommand)
+    const { args: { commandName, ...args } } = this.parse(DronzCliCommand)
     // console.log({ flags })
 
     if (commandName) {
       const command = addShortcuts({ commands })[commandName]
       if (command) {
-        command()
+        command({ flags, args })
       }
       else {
         console.log(`invalid command name '${commandName}'`)

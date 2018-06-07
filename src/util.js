@@ -51,6 +51,10 @@ const editFile = (path, getLine, content, cb = fsDefaultCallback) => {
   )
 }
 
+const readFile = (path) => {
+  return fs.readFileSync(path, 'utf8')
+}
+
 const nestedPrompt = ({ message = 'what now?', commands, run }) => {
   if (commands) {
     prompt({
@@ -71,5 +75,6 @@ module.exports = {
   getChoices,
   makeFile,
   editFile,
+  readFile,
   nestedPrompt
 }
