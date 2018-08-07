@@ -76,14 +76,16 @@ const run = () => {
     editFile(
       `test/services/${sdkModule}Service.test.js`,
       lines => lines.findIndex(line => line.indexOf('}') === 0),
-      require(`./templates/serviceTest.template`)({ name, sdkModule })
+      require(`./templates/serviceTest.template`)({ name, sdkModule }),
+      () => {
+        editFile(
+          `test/services/${sdkModule}Service.test.js`,
+          lines => lines.findIndex(line => line.includes('mocks')),
+          `import ${name}Mock from './mocks/${name}Mock'`
+        )
+      }
     )
-    editFile(
-      `test/services/${sdkModule}Service.test.js`,
-      lines => lines.findIndex(line => line.includes('mocks')),
-      `import ${name}Mock from './mocks/${name}Mock'`
-    )
-
+    
     // add method to controller test file
     editFile(
       `test/controllers/${sdkModule}Controller.test.js`,

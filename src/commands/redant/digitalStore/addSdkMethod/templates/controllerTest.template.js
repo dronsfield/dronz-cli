@@ -1,9 +1,8 @@
 module.exports = ({ name, sdkModule }) => (`
   testControllerMethod({
-    methodName: '${name}',
-    method: ${sdkModule}Controller.${name},
+    controller: ${sdkModule}Controller,
+    controllerFunctionName: '${name}',
     service: ${sdkModule}Service,
-    serviceName: '${sdkModule}Service',
     sandbox
   })`
 )
