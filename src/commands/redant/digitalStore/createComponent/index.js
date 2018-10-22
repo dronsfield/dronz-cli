@@ -5,10 +5,9 @@ const { makeFile } = require('../../../../util')
 
 const questions = [
   {
-    type: 'fuzzypath',
+    type: 'path',
     name: 'path',
-    message: 'component path?',
-    default: 'src/Foo'
+    message: 'component path?'
   }
 ]
 
@@ -17,8 +16,6 @@ const run = () => {
   .then(answers => {
     const componentPath = answers.path
     const name = componentPath.split('/').slice(-1)
-
-    console.log({ answers, componentPath })
 
     ;[
       'COMP',

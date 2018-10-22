@@ -3,7 +3,7 @@ const inquirer = require('inquirer')
 const _ = require('lodash')
 const colors = require('colors')
 
-inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'))
+inquirer.registerPrompt('path', require('inquirer-path').PathPrompt)
 
 const { nestedPrompt } = require('./util')
 
