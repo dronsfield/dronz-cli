@@ -5,7 +5,7 @@ const { makeFile } = require('../../../../util')
 
 const questions = [
   {
-    type: 'input',
+    type: 'fuzzypath',
     name: 'path',
     message: 'component path?',
     default: 'src/Foo'

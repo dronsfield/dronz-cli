@@ -1,7 +1,9 @@
 const { Command, flags } = require('@oclif/command')
-const { prompt } = require('inquirer')
+const inquirer = require('inquirer')
 const _ = require('lodash')
 const colors = require('colors')
+
+inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'))
 
 const { nestedPrompt } = require('./util')
 
