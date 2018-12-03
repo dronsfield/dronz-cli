@@ -55,7 +55,8 @@ class DronzCliCommand extends Command {
   }
 }
 DronzCliCommand.args = [
-  { name: 'commandName' }
+  { name: 'commandName' },
+  { name: 'arg1' }
 ]
 
 DronzCliCommand.flags = {
