@@ -1,6 +1,7 @@
 const createReduxModule = require('./createReduxModule')
 const addSdkMethod = require('./addSdkMethod')
 const createComponent = require('./createComponent')
+const createModel = require('./createModel')
 
 const commands = {
   nothing: {
@@ -12,7 +13,8 @@ const commands = {
   },
   createReduxModule,
   addSdkMethod,
-  createComponent
+  createComponent,
+  createModel
 }
 
 module.exports = {

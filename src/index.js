@@ -37,16 +37,19 @@ class DronzCliCommand extends Command {
     const { args: { commandName, ...args } } = this.parse(DronzCliCommand)
     // console.log({ flags })
 
+    const shortcuts = addShortcuts({ commands })
     if (commandName) {
-      const command = addShortcuts({ commands })[commandName]
-      if (command) {
-        command({ flags, args })
+      if (commandName === 'help') {
+        console.log(_.keys(shortcuts).join('\n'))
+      } else {
+        const command = shortcuts[commandName]
+        if (command) {
+          command({ flags, args })
+        } else {
+          console.log(`invalid command name '${commandName}'`)
+        }
       }
-      else {
-        console.log(`invalid command name '${commandName}'`)
-      }
-    }
-    else {
+    } else {
       nestedPrompt({
         message: 'what do you want to do?',
         commands

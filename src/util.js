@@ -2,6 +2,7 @@ const fs = require('fs')
 const mkdirp = require('mkdirp')
 const { dirname } = require('path')
 const { prompt } = require('inquirer')
+const _ = require('lodash')
 
 const getChoices = commands => Object.keys(commands).map(key => {
   return {
@@ -16,12 +17,17 @@ const fsDefaultCallback = err => {
   }
 }
 const makeFile = (path, content, cb = fsDefaultCallback) => {
-  mkdirp(dirname(path), err => {
-    if (err) {
-      throw err
-    } else {
-      fs.writeFile(path, content, cb)
-    }
+  return new Promise((resolve, reject) => {
+    mkdirp(dirname(path), err => {
+      if (err) {
+        throw err
+      } else {
+        fs.writeFile(path, content, (err) => {
+          cb(err)
+          resolve()
+        })
+      }
+    })
   })
 }
 
@@ -29,26 +35,33 @@ const makeFile = (path, content, cb = fsDefaultCallback) => {
 // getLine: function, lines => lineNumber
 // content: what to insert
 // cb: what to do after
-const editFile = (path, getLine, content, cb = fsDefaultCallback) => {
-  fs.readFile(
-    path,
-    'utf8',
-    (err, data) => {
-      if (err) {
-        throw err
-      } else {
-        const lines = data.split('\n')
-        let n = getLine(lines)
-        if (n >= 0) {
-          lines.splice(n, 0, content)
+const editFile = (path, getLine, content, cb, replaceLine = false) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(
+      path,
+      'utf8',
+      (err, data) => {
+        if (err) {
+          throw err
         } else {
-          lines.push(content)
+          const lines = data.split('\n')
+          let n = getLine(lines)
+          const newLine = (
+            _.isFunction(content)
+            ? content(lines[n] || '')
+            : content
+          )
+          if (n >= 0) {
+            lines.splice(n, Number(replaceLine), newLine)
+          } else {
+            lines.push(newLine)
+          }
+          const toWrite = lines.join('\n')
+          resolve(makeFile(path, toWrite, (cb || fsDefaultCallback)))
         }
-        const toWrite = lines.join('\n')
-        makeFile(path, toWrite, cb)
       }
-    }
-  )
+    )
+  })
 }
 
 const readFile = (path) => {
@@ -71,10 +84,15 @@ const nestedPrompt = ({ message = 'what now?', commands, run }) => {
   }
 }
 
+const upperFirstChar = (str) => {
+  return (str || '').charAt(0).toUpperCase() + str.slice(1)
+}
+
 module.exports = {
   getChoices,
   makeFile,
   editFile,
   readFile,
-  nestedPrompt
+  nestedPrompt,
+  upperFirstChar
 }
