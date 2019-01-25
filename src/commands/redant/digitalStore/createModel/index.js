@@ -30,7 +30,7 @@ const createModel = (modelName) => {
       require(`./templates/${layer}.template`)({ modelName, fileNames })
     )
     makeFile(
-      `server/v1/services/${fileName}/index.js`,
+      `server/v1/${layer}s/${fileName}/index.js`,
       require(`./templates/index.template`)({ fileName })
     )
   })
