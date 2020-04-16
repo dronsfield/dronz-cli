@@ -31,14 +31,12 @@ const addShortcuts = ({ commands, shortcuts = {} }) => {
 
 class DronzCliCommand extends Command {
   async run () {
-    const { flags } = this.parse(DronzCliCommand)
-    const { args: { commandName, ...args } } = this.parse(DronzCliCommand)
-    // console.log({ flags })
-
+    const { flags, args: { commandName, ...otherArgs } } = this.parse(DronzCliCommand)
+    const otherArgsArray = _.compact(Object.values(otherArgs))
     if (commandName) {
       const command = addShortcuts({ commands })[commandName]
       if (command) {
-        command({ flags, args })
+        command({ flags, args: otherArgsArray })
       }
       else {
         console.log(`invalid command name '${commandName}'`)
@@ -53,7 +51,9 @@ class DronzCliCommand extends Command {
   }
 }
 DronzCliCommand.args = [
-  { name: 'commandName' }
+  { name: 'commandName' },
+  { name: 'arg1' },
+  { name: 'arg2' }
 ]
 
 DronzCliCommand.flags = {

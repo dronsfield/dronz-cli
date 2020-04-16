@@ -1,7 +1,9 @@
 const makeComponentFileFromFolder = require('./makeComponentFileFromFolder')
+const igChecker = require('./igChecker')
 
 const commands = {
-  makeComponentFileFromFolder
+  makeComponentFileFromFolder,
+  igChecker
 }
 
 module.exports = {
