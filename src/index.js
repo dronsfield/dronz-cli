@@ -5,7 +5,7 @@ const colors = require('colors')
 
 inquirer.registerPrompt('path', require('inquirer-path').PathPrompt)
 
-const { nestedPrompt } = require('./util')
+const { nestedPrompt, printTable } = require('./util')
 
 const redant = require('./commands/redant')
 const dronz = require('./commands/dronz')
@@ -14,17 +14,19 @@ const test = require('./commands/test')
 const commands = { redant, dronz, test }
 
 const addShortcuts = ({ commands, shortcuts = {} }) => {
-  Object.values(commands).forEach(({ commands, shortcut, run }) => {
+  Object.values(commands).forEach((command) => {
+    const { commands, shortcut, run } = command
     if (commands) {
       addShortcuts({ commands, shortcuts })
     }
     if (shortcut) {
       if (Array.isArray(shortcut)) {
         shortcut.forEach(s => {
-          shortcuts[s] = run || _.noop
+          // shortcuts[s] = run || _.noop
+          shortcuts[s] = command
         })
       } else {
-        shortcuts[shortcut] = run || _.noop
+        shortcuts[shortcut] = command
       }
     }
   })
@@ -35,16 +37,17 @@ class DronzCliCommand extends Command {
   async run () {
     const { flags } = this.parse(DronzCliCommand)
     const { args: { commandName, ...args } } = this.parse(DronzCliCommand)
-    // console.log({ flags })
 
     const shortcuts = addShortcuts({ commands })
     if (commandName) {
       if (commandName === 'help') {
-        console.log(_.keys(shortcuts).join('\n'))
+        printTable(_.sortBy(_.keys(shortcuts).map(shortcutKey => {
+          return { shortcut: shortcutKey, description: shortcuts[shortcutKey].choice }
+        }), ["description"]), )
       } else {
         const command = shortcuts[commandName]
-        if (command) {
-          command({ flags, args })
+        if (command && command.run) {
+          command.run({ flags, args })
         } else {
           console.log(`invalid command name '${commandName}'`)
         }
